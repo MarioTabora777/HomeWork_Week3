@@ -1,6 +1,6 @@
 
 
-import {StyleSheet, Text, TouchableOpacity, View, TextInput} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, View, TextInput, KeyboardTypeOptions} from 'react-native';
 
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { useState } from 'react';
@@ -9,15 +9,18 @@ interface Props {
     placeholder:string;
     value: string, 
     text: string, 
-    onChange: (text: string) => void;
+    onChange: (text: string) => void; 
+    typeInput :  'text' | 'numeric' 
+
 
     
 }
 
 
-export default function CustomInput({placeholder,value,onChange,text}: Props){ 
+export default function CustomInput({placeholder,value,text ,onChange,typeInput}: Props){ 
  
 
+    const keyboardType:KeyboardTypeOptions = typeInput === 'numeric' ? 'numeric' : typeInput === 'text' ? 'default' : 'default'; 
 
  return (
 
@@ -27,7 +30,7 @@ export default function CustomInput({placeholder,value,onChange,text}: Props){
           <View style={style.inputContainer}>
            <MaterialIcons name={"key"} size={20}  color={"black"}> </MaterialIcons>
            <TextInput placeholder={placeholder} value={value} 
-           onChangeText={onChange} style={style.input} />
+           onChangeText={onChange} style={style.input} keyboardType={keyboardType} />
            
         </View>
         <Text>{text}</Text>  
@@ -40,7 +43,7 @@ const style = StyleSheet.create({
   wrapper: {
     width: '100%',
     marginBottom: 18, 
-      backgroundColor: '#b6cacf',
+ 
   },
 
   label: {

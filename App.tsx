@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View ,TouchableOpacity } from 'react-native';
 import CustomButton from './source/components/CustomButton';
 import CustomInput from './source/components/CustomInput';
 import { use, useState } from 'react';
@@ -27,13 +27,24 @@ const onlyNumber = text.replace(/[^0-9]/g, ''); //expresion regular para elimina
     name: user.name,
     age: onlyNumber
   });
-};
+}; 
 
+ 
+ 
 const [user, setUsuario] = useState({name: '', age: ''});
+      
+const [counter, setCounter] = useState(0);
 
 
+ const handleSum = () => {
+    setCounter(counter + 1);
+  }; 
 
+  const handleRestar = () => {
+    setCounter(counter - 1);
+  }; 
 
+const esPar = counter % 2 === 0;
 
  return (
   <View style={styles.container}> 
@@ -43,14 +54,40 @@ const [user, setUsuario] = useState({name: '', age: ''});
             <CustomInput placeholder="Nombre" value={user.name} onChange={handleNombreChange} text={'Nombre'}/>
             <CustomInput placeholder="Edad" value={user.age}  onChange={handleAgeChange} text={'Edad'}  />
 
+        </View> 
+
+         <Text style={styles.title}>Contador</Text> 
+         <Text style={styles.counterValue}>{counter}</Text>  
+
+        {/* validar que no sea negativo */}
+          {counter < 0 && (
+          <Text style={styles.warningText}>
+            No se recomienda valores negativos
+          </Text>
+        )} 
+
+        {/*validar pares  */}
+         <Text style={[styles.parImparText, esPar ? styles.par : styles.impar]}>
+          {esPar ? 'Número par' : 'Número impar'}
+        </Text> 
+
+        <View style={styles.buttonsRow}>
+          <TouchableOpacity style={styles.button} onPress={handleRestar}>
+            <Text style={styles.buttonText}>Restar -1</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.button} onPress={handleSum}>
+            <Text style={styles.buttonText}>Sumar +1</Text>
+          </TouchableOpacity>
         </View>
+
   </View>
     {user.name !== '' && user.age !== '' && (
       <Text style={{ marginTop: 20, fontSize: 16 }}>
         Hola, {user.name}. Tienes {user.age} years.
       </Text>
     )}
-
+    <StatusBar style="auto" />
   </View> 
   
   
@@ -79,7 +116,60 @@ const styles = StyleSheet.create({
     alignItems: "center" , 
     justifyContent: "space-around"
 
-  }
+  } ,
+  title: {
+    fontSize: 18,
+    fontWeight: '600',
+    marginBottom: 12,
+    color: '#111827',
+  },
+  counterValue: {
+    fontSize: 48,
+    fontWeight: '700',
+    marginBottom: 8,
+    color: '#111827',
+  }, warningText: {
+    marginTop: 6,
+    marginBottom: 10,
+    color: '#b91c1c', 
+    fontSize: 14,
+  },
+
+  parImparText: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 18,
+  },
+
+  par: {
+    color: 'blue',
+  },
+
+  impar: {
+    color: 'purple',
+  },
+
+  buttonsRow: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+
+  button: {
+    flex: 1,
+    paddingVertical: 14,
+    borderRadius: 8,
+    backgroundColor: '#2e4566',
+    alignItems: 'center',
+  },
+
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '500',
+  },
+
 });
 ;
 

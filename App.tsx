@@ -1,6 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View ,TouchableOpacity } from 'react-native';
-import CustomButton from './source/components/CustomButton';
+import { StyleSheet, Text, View ,TouchableOpacity , Image ,KeyboardTypeOptions   } from 'react-native';
 import CustomInput from './source/components/CustomInput';
 import { use, useState } from 'react';
 
@@ -8,12 +7,7 @@ import { use, useState } from 'react';
 
 
 export default function App() {
-/*funcion para asignar usuario, con el setUsuario, y el 
- useState para crear el estado del usuario, 
- con un objeto que tiene name y age, ambos como string 
- para facilitar la entrada de datos. Luego, se crean dos funciones handleNombreChange y handleAgeChange 
- para actualizar el estado del usuario cuando se cambian los campos de entrada. En el renderizado, 
- se muestra un mensaje de bienvenida si ambos campos están llenos.*/
+
 const handleNombreChange = (text: string) => {
   setUsuario({
     name: text,
@@ -21,8 +15,10 @@ const handleNombreChange = (text: string) => {
   });
 };
 
+
+//funcion que solo permita numeros en el input de edad, y actualice el estado del usuario con el nuevo valor de edad.
 const handleAgeChange = (text: string) => {
-const onlyNumber = text.replace(/[^0-9]/g, ''); //expresion regular para eliminar cualquier caracter que no sea un numero
+const onlyNumber = text.replace(/[^0-9]/g, ''); //expresion regular para eliminar cualquier caracter que no sea un número
   setUsuario({
     name: user.name,
     age: onlyNumber
@@ -33,7 +29,15 @@ const onlyNumber = text.replace(/[^0-9]/g, ''); //expresion regular para elimina
  
 const [user, setUsuario] = useState({name: '', age: ''});
       
-const [counter, setCounter] = useState(0);
+const [counter, setCounter] = useState(0); 
+
+  const [mostrarDetalles, setMostrarDetalles] = useState(false); 
+
+  //negando el estado para mostrar detalles, y asi poder alternar entre mostrar y ocultar detalles del usuario.
+  const handleToggle = () => {
+    setMostrarDetalles(!mostrarDetalles);
+  };
+
 
 
  const handleSum = () => {
@@ -44,15 +48,16 @@ const [counter, setCounter] = useState(0);
     setCounter(counter - 1);
   }; 
 
-const esPar = counter % 2 === 0;
+        {/*flag validar pares (comportamiento condicionado) */}
+const esPar = counter % 2 === 0; 
 
  return (
   <View style={styles.container}> 
     <View style={styles.card}>
         <View style={styles.buttonsWrapper}>
 
-            <CustomInput placeholder="Nombre" value={user.name} onChange={handleNombreChange} text={'Nombre'}/>
-            <CustomInput placeholder="Edad" value={user.age}  onChange={handleAgeChange} text={'Edad'}  />
+            <CustomInput placeholder="Nombre" value={user.name} onChange={handleNombreChange} text={'Nombre'} typeInput={'text'} />
+            <CustomInput placeholder="Edad" value={user.age}  onChange={handleAgeChange} text={'Edad'} typeInput={'numeric'} />
 
         </View> 
 
@@ -66,29 +71,65 @@ const esPar = counter % 2 === 0;
           </Text>
         )} 
 
-        {/*validar pares  */}
+        {/* estilo condicionado */}
          <Text style={[styles.parImparText, esPar ? styles.par : styles.impar]}>
           {esPar ? 'Número par' : 'Número impar'}
         </Text> 
 
         <View style={styles.buttonsRow}>
-          <TouchableOpacity style={styles.button} onPress={handleRestar}>
+          <TouchableOpacity style={styles.buttonSmall} onPress={handleRestar}>
             <Text style={styles.buttonText}>Restar -1</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.button} onPress={handleSum}>
+          <TouchableOpacity style={styles.buttonSmall} onPress={handleSum}>
             <Text style={styles.buttonText}>Sumar +1</Text>
-          </TouchableOpacity>
-        </View>
+          </TouchableOpacity> 
+       
+        </View>  
+{/* toggle para mostrar detalles del usuario, con un mensaje condicionado al estado del toggle, y una imagen de ejemplo.   */}
+         <TouchableOpacity style={styles.buttonFull} onPress={handleToggle}>
+          <Text style={styles.buttonText}>
+            {mostrarDetalles ? 'Ocultar detalles' : 'Mostrar detalles'}
+          </Text>
+        </TouchableOpacity>
 
-  </View>
+       
+    
+
+  </View> 
     {user.name !== '' && user.age !== '' && (
       <Text style={{ marginTop: 20, fontSize: 16 }}>
-        Hola, {user.name}. Tienes {user.age} years.
+        Hola, {user.name}. Tienes {user.age} años.
       </Text>
-    )}
-    <StatusBar style="auto" />
-  </View> 
+    )}  
+
+    
+    <StatusBar style="auto" />  
+
+
+  
+
+     {mostrarDetalles ? (
+          <View style={styles.detailsContainer}>
+            <Text style={styles.description}>
+              Detalles del usuario...
+            </Text>
+
+            <Image
+              source={{
+                uri: 'https://picsum.photos/200'
+              }}
+              style={styles.image}
+            />
+          </View>
+        ) : (
+          <Text style={styles.hiddenText}>
+            Detalles ocultos
+          </Text>
+        )}
+  </View>  
+
+  
   
   
 );
@@ -109,14 +150,11 @@ const styles = StyleSheet.create({
   backgroundColor: '#ffffff',
   elevation: 3,
 },
-  buttonsWrapper: {
-    backgroundColor: '#b6cacf', 
-    marginTop: 15 , 
-      width: '100%',
-    alignItems: "center" , 
-    justifyContent: "space-around"
-
-  } ,
+ buttonsWrapper: {
+  marginTop: 15,
+  width: '100%',
+  alignItems: 'center',
+} ,
   title: {
     fontSize: 18,
     fontWeight: '600',
@@ -149,12 +187,29 @@ const styles = StyleSheet.create({
     color: 'purple',
   },
 
-  buttonsRow: {
-    width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: 12,
-  },
+ buttonSmall: {
+  flex: 1,
+  paddingVertical: 14,
+  borderRadius: 8,
+  backgroundColor: '#2e4566',
+  alignItems: 'center',
+},
+
+buttonFull: {
+  width: '100%',
+  paddingVertical: 14,
+  borderRadius: 8,
+  backgroundColor: '#2e4566',
+  alignItems: 'center',
+  marginTop: 12,
+},
+
+buttonsRow: {
+  width: '100%',
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  gap: 12,
+},
 
   button: {
     flex: 1,
@@ -168,6 +223,25 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontWeight: '500',
+  }, 
+    detailsContainer: {
+    alignItems: 'center', 
+  }, 
+
+    hiddenText: {
+    fontSize: 16,
+    color: '#6b7280',
+  },
+ image: {
+    width: 200,
+    height: 200,
+    borderRadius: 10,
+  }, 
+
+  description: {
+    fontSize: 16,
+    marginBottom: 10,
+    color: '#111827',
   },
 
 });
